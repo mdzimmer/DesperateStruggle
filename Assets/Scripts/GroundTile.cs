@@ -1,21 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Utils;
 
 public class GroundTile : MonoBehaviour {
+	public int spriteLayerModfifier = 0;
+	public GameObject centerPoint;
+
 	SpriteRenderer sr;
-	Type type;
+	Tile tile;
 
 	// Use this for initialization
 	void Start () {
-		sr = GetComponent<SpriteRenderer>();
-		switch(type) {
-			case Type.HIGH:
-			sr.sprite = (Sprite)Resources.Load("Sprites/Dirt", typeof(Sprite));
-			break;
-			case Type.LOW:
-			sr.sprite = (Sprite)Resources.Load("Sprites/Grass", typeof(Sprite));
-			break;
-		}
+
 	}
 	
 	// Update is called once per frame
@@ -23,12 +19,18 @@ public class GroundTile : MonoBehaviour {
 	
 	}
 
-	public void SetType(Type _type) {
-		type = _type;
+	public void Initialize(Tile _tile) {
+		sr = transform.GetChild(0).GetComponent<SpriteRenderer>();
+		centerPoint = transform.GetChild(1).gameObject;
+		tile = _tile;
+		Offset offset = tile.offset;
+		int indent = offset.col % 2;
+		sr.sortingOrder = offset.row * 2 + indent + spriteLayerModfifier;
 	}
 
 	public enum Type {
 		HIGH,
-		LOW
+		LOW,
+		NONE
 	}
 }

@@ -44,24 +44,11 @@ namespace Utils {
 			return new Cube(x, y, z);
 		}
 
-		// public static Point AxialToPoint(Axial axial) {
-		// 	float x = size * Mathf.Sqrt(3) * (axial.q + axial.r / 2f);
-		// 	float y = size * 3f / 2f * axial.r;
-		// 	return new Point(x, y);
-		// }
-
 		public static Point OffsetToPoint(Offset offset) {
 			float x = size * 3f / 2f * offset.col;
 			float y = size * Mathf.Sqrt(3f) * (offset.row + .5f * (offset.col & 1));
 			return new Point(x, y);
 		}
-
-		// public static Axial PointToAxial(Point point) {
-		// 	int q = (int)((point.x * Mathf.Sqrt(3) / 3 - point.y / 3) / size);
-		// 	int r = (int)(point.y * 2 / 3 / size);
-		// 	// return AxialRound(new Axial(q, r));
-		// 	return new Axial(q, r);
-		// }
 
 		public static Vector3 PointToVector3(Point point) {
 			return new Vector3(point.x, point.y, 0f);
@@ -76,42 +63,32 @@ namespace Utils {
 		public static Vector3 TileCenter(Vector3 pos) {
 			RaycastHit2D[] hits = Physics2D.RaycastAll(pos, Vector2.up);
 			foreach(RaycastHit2D hit in hits) {
-				if(hit.collider.GetComponent<GroundTile>()) {
-					return hit.transform.position;
+				GroundTile groundTile = hit.collider.GetComponent<GroundTile>();
+				if(groundTile) {
+					Vector3 output = groundTile.centerPoint.transform.position;
+					// return hit.transform.position;
+					return output;
 				}
 			}
 			return Vector3.zero;
 		}
 
-		// public static Vector3 CenterToTile(Vector3 v3) {
-		// 	Point point = new Point(v3.x, v3.y);
-		// 	Axial axial = PointToAxial(point);
-		// 	Point point2 = AxialToPoint(axial);
-		// 	Vector3 output = PointToVector3(point2);
-		// 	print(point + " : " + axial + " : " + point2);
-		// 	return output;
-		// }
-
-		// public Axial AxialRound(Axial axial) {
-		// 	return CubeToAxial(CubeRound(AxialToCube(axial)));
-		// }
-
-		// public Cube CubeRound(Cube cube) {
-		// 	int rx = Mathf.Round(cube.x);
-		// 	int ry = Mathf.Round(cube.y);
-		// 	int rz = Mathf.Round(cube.z);
-		// 	int x_diff = Mathf.Abs(x - cube.x);
-		// 	int y_diff = Mathf.Abs(y - cube.y);
-		// 	int z_diff = Mathf.Abs(z - cube.z);
-		// 	if (x_diff > y_diff && x_diff > z_diff) {
-		// 		x = -y - z;
-		// 	} else if (y_diff > z_diff) {
-		// 		y = -x - z;
-		// 	} else {
-		// 		z = -x - y;
-		// 	}
-		// 	return new Cube(x, y, z);
-		// }
+		public static Tile TileAtMouse() {
+			Vector3 mousePos = MousePos();
+			RaycastHit2D[] hits = Physics2D.RaycastAll(mousePos, Vector2.up);
+			foreach(RaycastHit2D hit in hits) {
+				Transform parent = hit.collider.transform.parent;
+				if (parent) {
+					Tile tileHit = parent.gameObject.GetComponent<Tile>();
+					// print(hit.collider);
+					if (tileHit) {
+						// print (tileHit);
+						return tileHit;
+					}
+				}
+			}
+			return null;
+		}
 	}
 
 	public struct Axial {
@@ -167,15 +144,19 @@ namespace Utils {
 			y = _y;
 		}
 
-		// public Point(Vector3 v3) {
-		// 	x = v3.x;
-		// 	y = v3.y;
-		// }
-
 		public override string ToString() {
 			return "(" + x + ", " + y + ")";
 		}
 	}
-}
 
-// odd-q
+	public struct Neighbors {
+		public Tile u;
+		public Tile ul;
+		public Tile ur;
+		// public Tile l;
+		// public Tile r;
+		public Tile bl;
+		public Tile br;
+		public Tile b;
+	}
+}

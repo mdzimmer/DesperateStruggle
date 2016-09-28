@@ -35,5 +35,11 @@ public class TestManager : MonoBehaviour {
 		} else if (Input.GetKeyDown(KeyCode.T)) {
 			gc.SpawnUnit(GameController.UnitType.BLACKSQUIRE, mousePos);
 		}
+		if (Input.GetKeyDown(KeyCode.K)) {
+			Tile target = Util.TileAtMouse();
+			if (target) {
+				target.ChangeGroundType(GroundTile.Type.LOW);
+			}
+		}
 	}
 }

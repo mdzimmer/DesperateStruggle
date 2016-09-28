@@ -4,9 +4,7 @@ using Utils;
 
 public class CameraController : MonoBehaviour {
 	Vector3 mousePosA;
-	// float speed = .08f;
-	// bool setPosA = true;
-
+	
 	// Use this for initialization
 	void Start () {
 	
